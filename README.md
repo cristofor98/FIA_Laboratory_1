@@ -60,6 +60,7 @@ fact_dictionary = {
 
 ## Example of usage
 
+
 ![Example screenshot](./img/screenshot.png)
 
 
