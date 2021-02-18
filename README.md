@@ -64,4 +64,4 @@ fact_dictionary = {
 
 
 ## Contact
-Created by [@cristofor98]
+Created by @cristofor98
