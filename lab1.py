@@ -1,17 +1,18 @@
 import random
 import knowledge_database
+from anytree import Node, RenderTree
 import sys
 
 
 def ask_first_question(fact_dictionary):
-  check_remain_questions()
-  subject = random.choice(list(fact_dictionary.values()))
-  key = get_key(subject,knowledge_database.fact_dictionary)
-  if check_if_have_sens_question(key):
-   answer = question(subject)
-  else:
+   check_remain_questions()
+   subject = random.choice(list(fact_dictionary.values()))
+   key = get_key(subject,knowledge_database.fact_dictionary)
+   if check_if_have_sens_question(key):
+    answer = question(subject)
+   else:
     answer = "no"
-  if answer.lower() == "yes":
+   if answer.lower() == "yes":
     value = True 
     current_facts.append(key)
     delete_question(key)
@@ -20,12 +21,50 @@ def ask_first_question(fact_dictionary):
     if rule_value == True:
       current_knoledge[result] = knowledge_database.knowledge_dictionary.get(result)
     verify_knowledge(result)
-  elif answer.lower() == "no":
+   elif answer.lower() == "no":
     value = False
     delete_question_with_pair(key)
     ask_first_question(remain_questions)
-  else:
+   else:
     print("not writing respons in correct format")
+
+
+def backward_chaining():
+  print("Choose type of tourist")
+  for i in knowledge_database.turists_dictinary:
+    print(i, knowledge_database.turists_dictinary[i])
+  print("Type just the letter of type of tourist")
+  answer = input()
+  if answer.upper() in knowledge_database.turists_dictinary:
+    expresion = find_component(answer.upper())
+    if "+" in expresion:
+      left_knowledge,right_knowledge = expresion.split("+")
+      facts = []
+      left_fact, right_fact = decompose_rule(left_knowledge)
+      if left_fact not in facts:
+        facts.append(left_fact)
+      if right_fact not in facts:  
+        facts.append(right_fact)
+      left_fact, right_fact = decompose_rule(right_knowledge)
+      if left_fact not in facts:
+        facts.append(left_fact)
+      if right_fact not in facts:  
+        facts.append(right_fact)
+      for i in range(len(facts)):
+       fact_info = knowledge_database.fact_dictionary.get(facts[i])
+       print(fact_info)
+  else: 
+    print("not writing respons in correct format")  
+
+def decompose_rule(key):
+    expresion = find_component(key)
+    if "+" in expresion:
+      left_part,right_part = expresion.split("+")
+      return left_part,right_part
+    if "|" in expresion:
+      left_part,right_part = expresion.split("|")
+      return left_part,right_part
+
 
 def verify_knowledge(key):
     left_part,right_part = find_rule(key)
@@ -198,6 +237,7 @@ def verify_known_facts(fact):
 
 def ask_question(key):
     subject = remain_questions.get(key)
+    print(subject)
     answer = question(subject) 
     if answer.lower() == "yes":
       node_value = True
@@ -231,9 +271,14 @@ def get_key(val,my_dict):
              return key
     return "key doesn't exist"
  
-if __name__ == "__main__":
-  current_knoledge = {}
-  current_facts = []
-  remain_questions = knowledge_database.fact_dictionary.copy()
+current_knoledge = {}
+current_facts = []
+remain_questions = knowledge_database.fact_dictionary.copy()
+print("Do you whan forward chaining or backward chaining ? (Type forwards for foward chaining or backwards for backward chaining)")
+response = input()
+if response.lower() == "backward":
+  backward_chaining()
+elif response.lower() == "forward":  
   ask_first_question(knowledge_database.fact_dictionary)
-
+else:
+  print("not writing respons in correct format")
